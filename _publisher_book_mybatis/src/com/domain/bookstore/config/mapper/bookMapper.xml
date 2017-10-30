@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bookstore.book">
+	<sql id="select-book">
+		SELECT		isbn,
+					title,
+					author,
+					page,
+					price,
+					publish_date,
+					publisher_no
+		FROM 		book					
+	</sql>
+	
+	<!-- resultMap : BOOK 테이블 select 용 -->
+	<resultMap type="book" id="book-resultmap">
+		<id column="isbn" property="isbn"/>
+		<result column="title" property="title"/>
+		<result column="author" property="author"/>
+		<result column="page" property="page"/>
+		<result column="price" property="price"/>
+		<result column="publish_date" property="publishDate"/>
+	</resultMap>
+	<!-- resultMap : PUBLISHER 테이블과  join select 용  -->
+	<resultMap type="book" id="book-join-publisher-resultmap" extends="book-resultmap">
+		<association property="publisher" javaType="publisher">
+			<id column="publisher_no" property="publisherNo"/>
+			<result column="publisher_name" property="publisherName"/>
+			<result column="publisher_address" property="publisherAddress"/>
+			<result column="publisher_tel" property="publisherTel"/>
+		</association>
+	</resultMap>
+	
+	<!-- insert -->
+	<insert id="insertBook" parameterType="book">
+		INSERT INTO book VALUES (#{isbn},#{title},#{author},#{page},#{price},#{publishDate},#{publisherNo})
+	</insert>
+	<!-- update -->
+	<update id="updateBook" parameterType="book">
+		UPDATE 	book
+		SET		title=#{title},
+				author=#{author},
+				page=#{page},
+				price=#{price},
+				publish_date=#{publishDate},
+				publisher_no=#{publisherNo}
+		WHERE	isbn=#{isbn}
+	</update>
+	<!-- delete -->
+	<delete id="deleteBookByISBN" parameterType="string">
+		DELETE FROM book WHERE isbn = #{isbn}
+	</delete>
+	
+	<!-- select -->
+	<select id="selectBookList" resultMap="book-resultmap">
+		<include refid="select-book"/>
+	</select>
+	<select id="selectBookByISBN" resultMap="book-join-publisher-resultmap" parameterType="string">
+		<!-- publisher 테이블과 join select 기본 sql문은 publisherMapper의 sql문 사용 -->
+		<include refid="bookstore.publisher.select-publisher-join-book-sql"/>
+		WHERE	b.publisher_no = p.publisher_no
+		AND 	b.isbn=#{isbn}
+	</select>
+	
+	<select id="selectBookByAuthor" resultMap="book-resultmap" parameterType="string">
+		<include refid="select-book"/>
+		WHERE author = #{author}
+	</select>
+	
+	<select id="selectBookByTitle" resultMap="book-resultmap" parameterType="string">
+		<include refid="select-book"/>
+		WHERE title LIKE '%'||#{title}||'%'
+	</select>
+	
+	<select id="selectBookAfterPublishDate" resultMap="book-resultmap" parameterType="java.sql.Date">
+		<include refid="select-book"/>
+		
+		WHERE publish_date >= #{publishDate}
+		
+	</select>
+	
+	<select id="selectBookCount" resultType="_int">
+		SELECT count(isbn) FROM book
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

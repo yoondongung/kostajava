@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bookstore.publisher">
+	<sql id="select-publisher-sql">
+		SELECT 	publisher_no,
+				publisher_name,
+				publisher_address,
+				publisher_tel
+		FROM 	publisher 
+	</sql>
+	
+	<sql id="select-publisher-join-book-sql">
+		SELECT 	p.publisher_no,
+				p.publisher_name,
+				p.publisher_address,
+				p.publisher_tel,
+				b.isbn, b.title, b.author, b.page, b.price, b.publish_date
+		FROM 	publisher p, book b
+		
+	</sql>
+	<resultMap type="publisher" id="publisher-resultmap">
+		<id column="publisher_no" property="publisherNo"/>
+		<result column="publisher_name" property="publisherName"/>
+		<result column="publisher_address" property="publisherAddress"/>
+		<result column="publisher_tel" property="publisherTel"/>
+	</resultMap>
+	
+	<resultMap type="publisher" id="publisher-join-book-resultmap" extends="publisher-resultmap">
+		<collection property="bookList" ofType="book">
+			<id column="isbn" property="isbn"/>
+			<result column="title" property="title"/>
+			<result column="author" property="author"/>
+			<result column="page" property="page"/>
+			<result column="price" property="price"/>
+			<result column="publish_date" property="publishDate"/>
+		</collection>
+	</resultMap>
+	<!-- insert -->
+	<insert id="insertPublisher" parameterType="publisher">
+		<selectKey keyProperty="publisherNo" resultType="_int" order="BEFORE">
+			SELECT publisher_no_seq.nextval FROM dual
+		</selectKey>
+		INSERT INTO publisher VALUES (#{publisherNo},#{publisherName},#{publisherAddress},#{publisherTel})
+	</insert>
+	
+	<!-- update -->
+	<update id="updatePublisher" parameterType="publisher">
+		UPDATE 	publisher
+		SET		publisher_name=#{publisherName},
+				publisher_address=#{publisherAddress},
+				publisher_tel=#{publisherTel}
+		WHERE 	publisher_no=#{publisherNo}									
+	</update>
+	<!-- delete -->
+	<delete id="deletePublisherByPublisherNo" parameterType="_int">
+		DELETE FROM publisher WHERE publisher_no=#{value}
+	</delete>
+	
+	<!-- select -->
+	<select id="selectPublisherList" resultMap="publisher-resultmap">
+		<include refid="select-publisher-sql"/>
+	</select>
+	<select id="selectPublisherByNo" parameterType="_int" resultMap="publisher-join-book-resultmap">
+		<include refid="select-publisher-join-book-sql"/>
+		WHERE 	p.publisher_no = b.publisher_no(+)
+		AND		p.publisher_no = #{value}
+	</select>
+	<select id="selectPublisherByName"  resultMap="publisher-resultmap" parameterType="string">
+		<include refid="select-publisher-sql"/>
+		WHERE	publisher_name like '%'||#{publisherName}||'%'
+	</select>	
+	<select id="selectPublisherCount" resultType="int">
+		SELECT count(publisher_no) FROM publisher
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
