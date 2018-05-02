@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.employeeManagement.config.mybatis.mapper.employeeMapper">
+
+   <sql id="employee-column-sql">
+      EMPLOYEE_NO,
+      EMPLOYEE_NAME,
+      EMPLOYEE_PHONE_NUM,
+      EMPLOYEE_POSITION,
+      EMPLOYEE_EMAIL
+   </sql>
+
+   <!-- employee 조회 기본 sql -->
+   <sql id="employee-select-sql">
+      SELECT <include refid="employee-column-sql"/>
+      FROM EMPLOYEE 
+   </sql>
+
+   <!-- resultMap 등록 -->
+   <resultMap type="Employee" id="employee-resultmap">
+      <id column="EMPLOYEE_NO" property="employeeNo"/>
+      <result column="EMPLOYEE_NAME" property="employeeName"/>
+      <result column="EMPLOYEE_PHONE_NUM" property="employeePhoneNum"/>
+      <result column="EMPLOYEE_POSITION" property="employeePosition"/>
+      <result column="EMPLOYEE_EMAIL" property="employeeEmail"/>
+   </resultMap>
+
+   <!-- INSERT -->
+   <insert id="insertEmployee" parameterType="Employee">
+      INSERT INTO EMPLOYEE(<include refid="employee-column-sql"/>) 
+      VALUES(
+         #{employeeNo},
+         #{employeeName},
+         #{employeePhoneNum},
+         #{employeePosition},
+         #{employeeEmail}
+      )
+   </insert>
+
+
+   <!-- UPDATE -->
+   <update id="updateEmployeeByNo" parameterType="Employee">
+      UPDATE EMPLOYEE
+      <set>
+         <if test="employeeName != null"> EMPLOYEE_NAME = #{employeeName},</if>
+         <if test="employeePhoneNum != null"> EMPLOYEE_PHONE_NUM = #{employeePhoneNum},</if> 
+         <if test="employeePosition != null"> EMPLOYEE_POSITION = #{employeePosition},</if>
+         <if test="employeeEmail != null"> EMPLOYEE_EMAIL = #{employeeEmail}</if>
+      </set>
+      WHERE EMPLOYEE_NO = #{employeeNo}
+   </update>
+
+
+   <!-- 직원 번호로 DELETE -->
+   <delete id="deleteEmployeeByNo" parameterType="int">
+      DELETE FROM EMPLOYEE WHERE EMPLOYEE_NO = #{value}
+   </delete>
+
+   <!-- 직원 번호로 조회 -->
+   <select id="seleteEmployeeByNo" parameterType="int" resultMap="employee-resultmap">
+      <include refid="employee-select-sql"/>
+      WHERE EMPLOYEE_NO = #{value}
+   </select>
+   
+   <!-- 직원 이름으로 조회 -->
+   <select id="seleteEmployeeByName" parameterType="String">
+      <include refid="employee-select-sql"/>
+      WHERE EMPLOYEE_NAME = #{value}
+   </select>
+   
+   <!-- 핸드폰 번호로 조회 -->
+   <select id="seleteEmployeeByPhoneNum" parameterType="String">
+      <include refid="employee-select-sql"/>
+      WHERE EMPLOYEE_PHONE_NUM = #{value}
+   </select>
+   
+   <!-- 직원 번호로 조회 -->
+   <select id="seleteEmployeeByPosition" parameterType="String">
+      <include refid="employee-select-sql"/>
+      WHERE EMPLOYEE_POSITION = #{value}
+   </select>
+   
+   <!-- 이메일로 조회 -->
+   <select id="seleteEmployeeByEmail" parameterType="String">
+      <include refid="employee-select-sql"/>
+      WHERE EMPLOYEE_EMAIL = #{value}
+   </select>
+   
+   
+
+</mapper>
