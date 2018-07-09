@@ -11,16 +11,26 @@ import java.io.InputStream;
 public class Z04_InputStream {
 
 	public static void main(String[] args) {
+		
 		// 자동으로 자원을 반납해주는 방법!! 
 		// close()로 자원을 반납할수 있는 것들만 try()안에 넣을 수 있다.
 		try(InputStream is = new FileInputStream("C:/Users/qwe76/git/KostaJava/Day_20180709/src/test.txt")) {
 			
-			byte[] data = new byte[5];	// 한번에 읽을 배열 생성
+			byte[] data = new byte[5];
+			int num; // 읽을 개수
+			while((num = is.read(data, 0, 3)) != -1) {
+				String s = new String(data, 0, num);
+				System.out.print(s);
+			}
+			
+/*			가장 많이 쓰는 방법
+ * 			byte[] data = new byte[5];	// 한번에 읽을 배열 생성
 			int num; // 읽을 개수
 			while( (num = is.read(data)) != -1) {
 				String s = new String(data, 0, num);	// 배열, 시작index, 개수
 				System.out.print(s);
 			}
+*/
 			
 /*			while(true) {
 				byte[] data = new byte[5];	// 한번에 읽을 배열 생성
