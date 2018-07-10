@@ -1,11 +1,12 @@
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
  *  {키 : 값, 키 : 값} 쌍으로 이루어짐
  *					: 키를 기준으로 원소를 구분한다.
- *					: 키는 중복이 불가, 값은 중복이 가능
+ *					: 키는 중복이 불가, 값은 중복이 가능, 순서가 x
  *					: Map 에서는 중복 데이터는 덮어쓰기 한다. hashSet은 저장 안함!
  * @author "YoonDongUng"
  *
@@ -31,7 +32,14 @@ public class Z03_Map {
 			System.out.println(key + "가격 : " + hm.get(key));
 		}
 		
-		
-		
+		Set<Entry<String, Integer>> se = hm.entrySet();	// keyset과 비교해서 보기!!
+												// 키, 값 목록을 저장한 Entry의 set의 자료구조로 리턴
+//		System.out.println(se);
+		Iterator<Entry<String, Integer>> iter2 = se.iterator();
+		while(iter2.hasNext()){
+			Entry<String, Integer> entry = iter2.next();
+			System.out.println(entry);
+			System.out.println(entry.getKey() + entry.getValue());
+		}
 	}	// end of main
 }	// end of class
